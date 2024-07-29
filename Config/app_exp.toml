@@ -1,0 +1,8 @@
+[bot]
+master = [100, 200]
+botToken = 'key'
+
+
+[proxy]
+status = false
+url = "http://127.0.0.1:7890"

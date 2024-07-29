@@ -24,13 +24,20 @@ status = false
 url = "socks5://127.0.0.1:7890"
 ```
 
+### 本地部署 / Local Deployment
 - 安装依赖并运行。Install dependencies and run.
 ```shell
 pip3 install -r requirements.txt
 python3 main.py
 ```
 
+### Docker 部署 / Docker Deployment
+- 使用预构建镜像。Use pre-built image.
+```shell
+docker run -d --name keyboxchecker -v $(pwd)/Config:/app/Config ghcr.io/kimmyxyc/keyboxchecker:main
+```
+
 ## 使用 / Usage
-Send the keybox.xml file in the private message or reply with /check to keybox.xml.
+Send the keybox.xml file in the private chat or reply with /check to keybox.xml.
 
 ![Usage](./screenshot.png)
