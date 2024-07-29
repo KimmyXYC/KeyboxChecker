@@ -1,10 +1,11 @@
 # Keybox Checker
+[![actions](https://github.com/KimmyXYC/KeyboxChecker/actions/workflows/docker-ci.yaml/badge.svg)](https://github.com/KimmyXYC/KeyboxChecker/actions/workflows/docker-ci.yaml)
 ## 部署 / Deployment
 
 - 下载源码。Download the code.
 ```shell
 git clone https://github.com/KimmyXYC/KeyboxChecker.git
-cd ApproveByPoll
+cd KeyboxChecker
 ```
 
 - 复制配置文件。Copy configuration file.
@@ -38,6 +39,7 @@ docker run -d --name keyboxchecker -v $(pwd)/Config:/app/Config ghcr.io/kimmyxyc
 ```
 
 ## 使用 / Usage
-Send the keybox.xml file in the private chat or reply with /check to keybox.xml.
+私聊发送 keybox.xml 文件 或 对 keybox.xml 文件回复 /check 
+Send the keybox.xml file in the private chat or reply with /check to keybox.xml file.
 
 ![Usage](./screenshot.png)
