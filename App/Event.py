@@ -188,6 +188,7 @@ async def keybox_check(bot, message, document):
     except Exception:
         with open("res/json/status.json", 'r', encoding='utf-8') as file:
             status_json = json.load(file)
+            reply += "\n⚠️ Using local revoked keybox list"
     status = status_json['entries'].get(serial_number_string, None)
     if status is None:
         reply += "\n✅ Serial number not found in Google's revoked keybox list"
