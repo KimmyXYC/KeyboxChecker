@@ -39,7 +39,7 @@ docker run -d --name keyboxchecker -v $(pwd)/Config:/app/Config ghcr.io/kimmyxyc
 ```
 
 ## 使用 / Usage
-私聊发送 keybox.xml 文件 或 对 keybox.xml 文件回复 /check 
+私聊发送 keybox.xml 文件 或 对 keybox.xml 文件回复 /check  
 Send the keybox.xml file in the private chat or reply with /check to keybox.xml file.
 
 ![Usage](./screenshot.png)
