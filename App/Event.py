@@ -79,7 +79,7 @@ def compare_keys(public_key1, public_key2):
 async def keybox_check(bot, message, document):
     file_info = await bot.get_file(document.file_id)
     downloaded_file = await bot.download_file(file_info.file_path)
-    with tempfile.NamedTemporaryFile(dir="downloads", delete=True) as temp_file:
+    with tempfile.NamedTemporaryFile(delete=True) as temp_file:
         temp_file.write(downloaded_file)
         temp_file.flush()
         try:
