@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # @Time: 2024/7/28 19:55
-# @FileName: Event.py
+# @FileName: event.py
 # @Software: PyCharm
 # @GitHub: KimmyXYC
 import aiohttp

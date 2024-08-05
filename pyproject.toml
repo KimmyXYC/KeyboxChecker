@@ -1,0 +1,90 @@
+[project]
+name = ""
+version = ""
+description = ""
+authors = [
+    { name = "KimmyXYC", email = "kimmyxyc@gmail.com" },
+]
+dependencies = [
+    "pydantic<3.0.0,>=2.0.0",
+    "pydantic-settings<3.0.0,>=2.1.0",
+    "python-dotenv<2.0.0,>=1.0.0",
+    "pytelegrambotapi<5.0.0,>=4.14.0",
+    "loguru<1.0.0,>=0.7.0",
+    "elara<1.0.0,>=0.5.5",
+    "httpx<1.0.0,>=0.25.1",
+    "shortuuid<2.0.0,>=1.0.11",
+    "asgiref<4.0.0,>=3.7.2",
+    "aiohttp>=3.9.0",
+    "dynaconf>=3.2.4",
+    "pre-commit>=3.5.0",
+    "cryptography>=43.0.0",
+]
+
+
+
+requires-python = ">=3.8"
+readme = "README.md"
+license = { text = "AGPL-3.0" }
+
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".idea",
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+# Assume Python 3.8
+target-version = "py38"
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+select = ["E4", "E7", "E9", "F"]
+ignore = []
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+[tool.pdm]

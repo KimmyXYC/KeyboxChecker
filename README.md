@@ -10,32 +10,27 @@ cd KeyboxChecker
 
 - 复制配置文件。Copy configuration file.
 ```shell
-cp Config/app_exp.toml Config/app.toml
+cp .env.exp .env
 ```
 
 - 填写配置文件。Fill out the configuration file.
-```toml
-[bot]
-master = [100, 200]
-botToken = 'key' # Required, Bot Token
-
-
-[proxy]
-status = false
-url = "socks5://127.0.0.1:7890"
+```
+TELEGRAM_BOT_TOKEN=xxx
+# TELEGRAM_BOT_PROXY_ADDRESS=socks5://127.0.0.1:7890
 ```
 
 ### 本地部署 / Local Deployment
 - 安装依赖并运行。Install dependencies and run.
 ```shell
-pip3 install -r requirements.txt
-python3 main.py
+pip3 install pdm
+pdm install
+pdm run python main.py
 ```
 
 ### Docker 部署 / Docker Deployment
 - 使用预构建镜像。Use pre-built image.
 ```shell
-docker run -d --name keyboxchecker -v $(pwd)/Config:/app/Config ghcr.io/kimmyxyc/keyboxchecker:main
+docker run -d --name keyboxchecker --env-file .env ghcr.io/kimmyxyc/keyboxchecker:main
 ```
 
 ## 使用 / Usage
