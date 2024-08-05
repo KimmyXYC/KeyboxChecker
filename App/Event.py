@@ -194,5 +194,5 @@ async def keybox_check(bot, message, document):
         reply += "\n✅ Serial number not found in Google's revoked keybox list"
     else:
         reply += f"\n❌ Serial number found in Google's revoked keybox list\n🔍 *Reason:* `{status['reason']}`"
-
+    reply += f"\n⏱ *Check Time (UTC):* {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
     await bot.reply_to(message, reply, parse_mode='Markdown')
