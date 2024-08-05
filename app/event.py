@@ -186,6 +186,7 @@ async def keybox_check(bot, message, document):
     try:
         status_json = await load_from_url()
     except Exception:
+        logger.error("Failed to fetch Google's revoked keybox list")
         with open("res/json/status.json", 'r', encoding='utf-8') as file:
             status_json = json.load(file)
             reply += "\n⚠️ Using local revoked keybox list"

@@ -29,6 +29,7 @@ class BotRunner(object):
 
             asyncio_helper.proxy = BotSetting.proxy_address
             logger.info("Proxy tunnels are being used!")
+        await self.bot.set_my_commands([types.BotCommand("check", "Check the validity of the Keybox")])
 
         @bot.message_handler(commands=['start', 'help'], chat_types=['private'])
         async def handle_start(message):
