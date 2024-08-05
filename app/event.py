@@ -104,7 +104,7 @@ async def keybox_check(bot, message, document):
     serial_number_string = hex(serial_number)[2:].lower()
     reply = f"🔐 *Serial number:* `{serial_number_string}`"
     subject = certificate.subject
-    reply += f"\nℹ️ *Subject:* `"
+    reply += "\nℹ️ *Subject:* `"
     for rdn in subject:
         reply += f"{rdn.oid._name}={rdn.value}, "
     reply = reply[:-2]
@@ -156,13 +156,13 @@ async def keybox_check(bot, message, document):
                 public_key.verify(signature, tbs_certificate, padding_algorithm)
             else:
                 raise ValueError("Unsupported signature algorithms")
-        except Exception as e:
+        except Exception:
             flag = False
             break
     if flag:
-        reply += f"\n✅ Valid keychain"
+        reply += "\n✅ Valid keychain"
     else:
-        reply += f"\n❌ Invalid keychain"
+        reply += "\n❌ Invalid keychain"
 
     # Root Certificate Validation
     root_certificate = x509.load_pem_x509_certificate(pem_certificates[-1].encode(), default_backend())
