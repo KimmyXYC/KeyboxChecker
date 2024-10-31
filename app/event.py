@@ -6,6 +6,7 @@
 import aiohttp
 import json
 import tempfile
+import time
 import xml.etree.ElementTree as ET
 from loguru import logger
 from datetime import datetime
@@ -18,14 +19,19 @@ from cryptography.hazmat.primitives.asymmetric import padding, ec
 async def load_from_url():
     url = "https://android.googleapis.com/attestation/status"
 
+    timestamp = int(time.time())
     headers = {
         "Cache-Control": "max-age=0, no-cache, no-store, must-revalidate",
         "Pragma": "no-cache",
         "Expires": "0"
     }
 
+    params = {
+        "ts": timestamp
+    }
+
     async with aiohttp.ClientSession() as session:
-        async with session.get(url, headers=headers) as response:
+        async with session.get(url, headers=headers, params=params) as response:
             if response.status != 200:
                 raise Exception(f"Error fetching data: {response.status}")
             return await response.json()
