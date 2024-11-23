@@ -196,8 +196,16 @@ async def keybox_check(bot, message, document):
         with open("res/json/status.json", 'r', encoding='utf-8') as file:
             status_json = json.load(file)
             reply += "\n⚠️ Using local revoked keybox list"
-    status = status_json['entries'].get(serial_number_string, None)
-    if status is None:
+
+    status = None
+    for i in range(pem_number):
+        certificate = x509.load_pem_x509_certificate(pem_certificates[i].encode(), default_backend())
+        serial_number = certificate.serial_number
+        serial_number_string = hex(serial_number)[2:].lower()
+        if status_json['entries'].get(serial_number_string, None):
+            status = status_json['entries'][serial_number_string]
+            break
+    if not status:
         reply += "\n✅ Serial number not found in Google's revoked keybox list"
     else:
         reply += f"\n❌ Serial number found in Google's revoked keybox list\n🔍 *Reason:* `{status['reason']}`"
