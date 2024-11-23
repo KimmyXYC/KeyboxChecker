@@ -188,6 +188,10 @@ async def keybox_check(bot, message, document):
     else:
         reply += "\n❌ Unknown root certificate"
 
+    # Number of Certificates in Keychain
+    if pem_number >= 4:
+        reply += "\n🟡 *Warning:* More than 3 certificates in the keychain"
+
     # Validation of certificate revocation
     try:
         status_json = await load_from_url()
