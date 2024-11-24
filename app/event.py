@@ -9,7 +9,7 @@ import tempfile
 import time
 import xml.etree.ElementTree as ET
 from loguru import logger
-from datetime import datetime
+from datetime import datetime, timezone
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
@@ -19,7 +19,6 @@ from cryptography.hazmat.primitives.asymmetric import padding, ec
 async def load_from_url():
     url = "https://android.googleapis.com/attestation/status"
 
-    timestamp = int(time.time())
     headers = {
         "Cache-Control": "max-age=0, no-cache, no-store, must-revalidate",
         "Pragma": "no-cache",
@@ -27,7 +26,7 @@ async def load_from_url():
     }
 
     params = {
-        "ts": timestamp
+        "ts": int(time.time())
     }
 
     async with aiohttp.ClientSession() as session:
@@ -35,6 +34,24 @@ async def load_from_url():
             if response.status != 200:
                 raise Exception(f"Error fetching data: {response.status}")
             return await response.json()
+
+
+def get_device_ids_and_algorithms(xml_file):
+    tree = ET.parse(xml_file)
+    root = tree.getroot()
+
+    results = []
+    for keybox in root.findall('Keybox'):
+        device_id = keybox.get('DeviceID')
+
+        for key in keybox.findall('Key'):
+            algorithm = key.get('algorithm')
+            device_info = {
+                'DeviceID': device_id if device_id else 'Unknown',
+                'Algorithm': algorithm if algorithm else 'Unknown'
+            }
+            results.append(device_info)
+    return results
 
 
 def parse_number_of_certificates(xml_file):
@@ -91,6 +108,7 @@ async def keybox_check(bot, message, document):
         try:
             pem_number = parse_number_of_certificates(temp_file.name)
             pem_certificates = parse_certificates(temp_file.name, pem_number)
+            keybox_info = get_device_ids_and_algorithms(temp_file.name)
         except Exception as e:
             logger.error(f"[Keybox Check][message.chat.id]: {e}")
             await bot.reply_to(message, e)
@@ -105,19 +123,24 @@ async def keybox_check(bot, message, document):
         await bot.reply_to(message, e)
         return
 
+    # Keybox Information
+    reply = f"📱 *Device ID:* `{keybox_info[0]['DeviceID']}`"
+    reply += f"\n🔑 *Algorithm:* `{keybox_info[0]['Algorithm']}`"
+    reply += "\n----------------------------------------"
+
     # Certificate Validity Verification
     serial_number = certificate.serial_number
     serial_number_string = hex(serial_number)[2:].lower()
-    reply = f"🔐 *Serial number:* `{serial_number_string}`"
+    reply += f"\n🔐 *Serial number:* `{serial_number_string}`"
     subject = certificate.subject
     reply += "\nℹ️ *Subject:* `"
     for rdn in subject:
         reply += f"{rdn.oid._name}={rdn.value}, "
     reply = reply[:-2]
     reply += "`"
-    not_valid_before = certificate.not_valid_before
-    not_valid_after = certificate.not_valid_after
-    current_time = datetime.utcnow()
+    not_valid_before = certificate.not_valid_before_utc
+    not_valid_after = certificate.not_valid_after_utc
+    current_time = datetime.now(timezone.utc)
     is_valid = not_valid_before <= current_time <= not_valid_after
     if is_valid:
         reply += "\n✅ Certificate within validity period"
@@ -190,7 +213,7 @@ async def keybox_check(bot, message, document):
 
     # Number of Certificates in Keychain
     if pem_number >= 4:
-        reply += "\n🟡 *Warning:* More than 3 certificates in the keychain"
+        reply += "\n🟡 More than 3 certificates in the keychain"
 
     # Validation of certificate revocation
     try:
