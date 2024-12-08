@@ -7,6 +7,7 @@ import aiohttp
 import json
 import tempfile
 import time
+import os
 import xml.etree.ElementTree as ET
 from loguru import logger
 from datetime import datetime, timezone
@@ -112,17 +113,20 @@ def compare_keys(public_key1, public_key2):
 async def keybox_check(bot, message, document):
     file_info = await bot.get_file(document.file_id)
     downloaded_file = await bot.download_file(file_info.file_path)
-    with tempfile.NamedTemporaryFile(delete=True) as temp_file:
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
         temp_file.write(downloaded_file)
         temp_file.flush()
+        temp_file.close()
         try:
             pem_number = parse_number_of_certificates(temp_file.name)
             pem_certificates = parse_certificates(temp_file.name, pem_number)
             private_key = parse_private_key(temp_file.name)
             keybox_info = get_device_ids_and_algorithms(temp_file.name)
+            os.remove(temp_file.name)
         except Exception as e:
             logger.error(f"[Keybox Check][message.chat.id]: {e}")
             await bot.reply_to(message, e)
+            os.remove(temp_file.name)
             return
     try:
         certificate = x509.load_pem_x509_certificate(
