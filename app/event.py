@@ -133,11 +133,15 @@ async def keybox_check(bot, message, document):
             pem_certificates[0].encode(),
             default_backend()
         )
-        private_key = serialization.load_pem_private_key(
-            private_key.encode(),
-            password=None,
-            backend=default_backend()
-        )
+        try:
+            private_key = serialization.load_pem_private_key(
+                private_key.encode(),
+                password=None,
+                backend=default_backend()
+            )
+            check_private_key = True
+        except Exception:
+            check_private_key = False
     except Exception as e:
         logger.error(f"[Keybox Check][message.chat.id]: {e}")
         await bot.reply_to(message, e)
@@ -170,12 +174,15 @@ async def keybox_check(bot, message, document):
         reply += "\n❌ Invalid certificate"
 
     # Private Key Verification
-    private_key_public_key = private_key.public_key()
-    certificate_public_key = certificate.public_key()
-    if compare_keys(private_key_public_key, certificate_public_key):
-        reply += "\n✅ Matching private key and certificate public key"
+    if check_private_key:
+        private_key_public_key = private_key.public_key()
+        certificate_public_key = certificate.public_key()
+        if compare_keys(private_key_public_key, certificate_public_key):
+            reply += "\n✅ Matching private key and certificate public key"
+        else:
+            reply += "\n❌ Mismatched private key and certificate public key"
     else:
-        reply += "\n❌ Mismatched private key and certificate public key"
+        reply += "\n❌ No correctly formatted private key found"
 
     # Keychain Authentication
     flag = True
