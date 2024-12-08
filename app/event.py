@@ -182,7 +182,7 @@ async def keybox_check(bot, message, document):
         else:
             reply += "\n❌ Mismatched private key and certificate public key"
     else:
-        reply += "\n❌ No correctly formatted private key found"
+        reply += "\n❌ Invalid private key"
 
     # Keychain Authentication
     flag = True
