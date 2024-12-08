@@ -80,6 +80,16 @@ def parse_certificates(xml_file, pem_number):
         raise Exception("No Certificate found.")
 
 
+def parse_private_key(xml_file):
+    tree = ET.parse(xml_file)
+    root = tree.getroot()
+    private_key = root.find('.//PrivateKey')
+    if private_key is not None:
+        return private_key.text.strip()
+    else:
+        raise Exception("No PrivateKey found.")
+
+
 def load_public_key_from_file(file_path):
     with open(file_path, 'rb') as key_file:
         public_key = serialization.load_pem_public_key(
@@ -108,6 +118,7 @@ async def keybox_check(bot, message, document):
         try:
             pem_number = parse_number_of_certificates(temp_file.name)
             pem_certificates = parse_certificates(temp_file.name, pem_number)
+            private_key = parse_private_key(temp_file.name)
             keybox_info = get_device_ids_and_algorithms(temp_file.name)
         except Exception as e:
             logger.error(f"[Keybox Check][message.chat.id]: {e}")
@@ -117,6 +128,11 @@ async def keybox_check(bot, message, document):
         certificate = x509.load_pem_x509_certificate(
             pem_certificates[0].encode(),
             default_backend()
+        )
+        private_key = serialization.load_pem_private_key(
+            private_key.encode(),
+            password=None,
+            backend=default_backend()
         )
     except Exception as e:
         logger.error(f"[Keybox Check][message.chat.id]: {e}")
@@ -148,6 +164,14 @@ async def keybox_check(bot, message, document):
         reply += "\n❌ Expired certificate"
     else:
         reply += "\n❌ Invalid certificate"
+
+    # Private Key Verification
+    private_key_public_key = private_key.public_key()
+    certificate_public_key = certificate.public_key()
+    if compare_keys(private_key_public_key, certificate_public_key):
+        reply += "\n✅ Matching private key and certificate public key"
+    else:
+        reply += "\n❌ Mismatched private key and certificate public key"
 
     # Keychain Authentication
     flag = True
