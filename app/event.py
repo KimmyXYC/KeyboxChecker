@@ -15,6 +15,7 @@ from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding, ec
+import re
 
 
 async def load_from_url():
@@ -134,6 +135,7 @@ async def keybox_check(bot, message, document):
             default_backend()
         )
         try:
+            private_key = re.sub(re.compile(r'^\s+', re.MULTILINE), '', private_key)
             private_key = serialization.load_pem_private_key(
                 private_key.encode(),
                 password=None,
